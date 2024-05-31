@@ -3,6 +3,7 @@ import mediapipe as mp
 import numpy as np
 import plotly.graph_objects as go
 from scipy.spatial import procrustes
+import scripts
 
 mp_face_mesh = mp.solutions.face_mesh
 
@@ -146,7 +147,7 @@ def get_landmarks(image, reference_landmarks, review=False):
                 cv2.destroyAllWindows()
             return None, None
 
-reference_image = cv2.imread("reference_image.jpeg")
+reference_image = cv2.imread(scripts.__path__[0] + "/reference_image.jpeg")
 _, reference_landmarks = get_landmarks(reference_image, reference_landmarks=None)
 
 if __name__ == "__main__":

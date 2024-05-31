@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import networkx as nx
 from torch_geometric.data import Data
 from torch_geometric.nn import GINConv, global_mean_pool, BatchNorm
+import scripts
 
 
 class SimpleGCN(torch.nn.Module):
@@ -46,12 +47,12 @@ inverse_label_mapping = {v: k for k, v in label_mapping.items()}
 # Load the trained model
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = SimpleGCN(input_dim=3, hidden_dim=128, output_dim=output_dim)
-model.load_state_dict(torch.load('ck_GINConvBN.pt', map_location=device))
+model.load_state_dict(torch.load(scripts.__path__[0] + '/ck_GINConvBN.pt', map_location=device))
 model = model.to(device)
 model.eval()
 
 # Create edge_index from the graph once
-adjacency_matrix = np.loadtxt('../standard_mesh_adj_matrix.csv', delimiter=',')
+adjacency_matrix = np.loadtxt(scripts.__path__[0] + '/../standard_mesh_adj_matrix.csv', delimiter=',')
 graph = nx.from_numpy_array(adjacency_matrix)
 edge_index = []
 for edge in graph.edges:
