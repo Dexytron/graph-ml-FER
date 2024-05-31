@@ -14,7 +14,7 @@ In this document various different simple architectures are compared on the CK d
   - [GIN + Batch Normalization + Dropout](#gin--batch-normalization--dropout)
 
 ## Results
-GIN + Batch Normalization performed best among the initial tests, and after trying various refinements of this architecture, the best results were obtained with GIN + Batch Normalization + Dropout.
+GIN + Batch Normalization performed best among the initial tests, and after trying various refinements of this architecture, not much improvement was observed.
 
 <details>
     <summary>Testing code</summary>
