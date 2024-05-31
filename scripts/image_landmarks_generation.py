@@ -8,7 +8,7 @@ import scripts
 mp_face_mesh = mp.solutions.face_mesh
 
 
-def landmarks_detection(img, results, draw=False):
+def landmarks_detection(img, results, draw=False, marker_color=(0, 255, 0), marker_size=1):
     """
     Function to detect landmarks on the face
     :param img: cv2 image object
@@ -21,7 +21,7 @@ def landmarks_detection(img, results, draw=False):
     mesh_coords = [(point.x * img_width, point.y * img_height, point.z * img_width) for point in
                    results.multi_face_landmarks[0].landmark]
     if draw:
-        [cv2.drawMarker(img, (int(p[0]), int(p[1])), (0, 255, 0), markerType=cv2.MARKER_STAR, markerSize=1) for p in mesh_coords]
+        [cv2.drawMarker(img, (int(p[0]), int(p[1])), marker_color, markerType=cv2.MARKER_STAR, markerSize=marker_size) for p in mesh_coords]
     return mesh_coords
 
 
