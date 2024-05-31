@@ -33,13 +33,16 @@ class SimpleGCN(torch.nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-dataset = 'ck'  # 'ck' or 'fer2013'
+dataset = 'ck'
+# dataset = 'fer2013'
 if dataset == 'ck':
     output_dim = 8
     label_mapping = {'neutral': 0, 'happiness': 1, 'sadness': 2, 'surprise': 3, 'fear': 4, 'disgust': 5, 'anger': 6, 'contempt': 7}
+    model_path = scripts.__path__[0] + '/ck_GINConvBN.pt'
 elif dataset == 'fer2013':
     output_dim = 7
     label_mapping = {'neutral': 0, 'happy': 1, 'sad': 2, 'surprise': 3, 'fear': 4, 'disgust': 5, 'angry': 6}
+    model_path = scripts.__path__[0] + '/fer2013_GINConvBN.pt'
 else:
     raise ValueError('Invalid dataset')
 inverse_label_mapping = {v: k for k, v in label_mapping.items()}
@@ -47,7 +50,7 @@ inverse_label_mapping = {v: k for k, v in label_mapping.items()}
 # Load the trained model
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = SimpleGCN(input_dim=3, hidden_dim=128, output_dim=output_dim)
-model.load_state_dict(torch.load(scripts.__path__[0] + '/ck_GINConvBN.pt', map_location=device))
+model.load_state_dict(torch.load(model_path, map_location=device))
 model = model.to(device)
 model.eval()
 
@@ -62,7 +65,12 @@ edge_index = torch.tensor(edge_index, dtype=torch.int64).t().contiguous()
 
 
 # Inference function
-def infer_model(landmarks):
+def infer_model(landmarks) -> str:
+    """"
+    Function to perform inference on the trained model
+    :param landmarks: normalized landmarks
+    :return: predicted expression
+    """
     model.eval()
 
     with torch.no_grad():

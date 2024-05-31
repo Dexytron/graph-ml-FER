@@ -27,32 +27,62 @@ def drawColor(img, colors):
         cv.rectangle(img, (x, y ), (x+w, y+h), color, -1)
 
 
-def textWithBackground(img, text, font, fontScale, textPos, textThickness=1,textColor=(0,255,0), bgColor=(0,0,0), pad_x=3, pad_y=3, bgOpacity=0.5):
+def textWithBackground(img, text, font, fontScale, textPos, textThickness=1, textColor=(255, 255, 255), bgColor=(0, 0, 0), bgOpacity=0.5, corner='top-left'):
     """
-    Draws text with background, with  control transparency
-    @param img:(mat) which you want to draw text
-    @param text: (string) text you want draw
-    @param font: fonts face, like FONT_HERSHEY_COMPLEX, FONT_HERSHEY_PLAIN etc.
-    @param fontScale: (double) the size of text, how big it should be.
-    @param textPos: tuple(x,y) position where you want to draw text
-    @param textThickness:(int) fonts weight, how bold it should be
-    @param textPos: tuple(x,y) position where you want to draw text
-    @param textThickness:(int) fonts weight, how bold it should be.
-    @param textColor: tuple(BGR), values -->0 to 255 each
-    @param bgColor: tuple(BGR), values -->0 to 255 each
-    @param pad_x: int(pixels)  padding of in x direction
-    @param pad_y: int(pixels) 1 to 1.0 (), controls transparency of  text background
-    @return: img(mat) with draw with background
+    Draws text with a rounded translucent background box and padding.
+    @param img: (mat) The image on which you want to draw text.
+    @param text: (string) The text you want to draw.
+    @param font: Font face, like FONT_HERSHEY_COMPLEX, FONT_HERSHEY_PLAIN, etc.
+    @param fontScale: (double) The size of the text, how big it should be.
+    @param textPos: tuple(x,y) Padding between the outer frame and the text box.
+    @param textThickness: (int) Font weight, how bold it should be.
+    @param textColor: tuple(BGR) Color values for text (0 to 255 each).
+    @param bgColor: tuple(BGR) Color values for background (0 to 255 each).
+    @param bgOpacity: float (0 to 1.0) Transparency of the text background.
+    @param corner: string Reference corner for positioning text ("top-left", "top-right", "bottom-left", "bottom-right").
+    @return: img (mat) with text drawn on it.
     """
-    (t_w, t_h), _= cv.getTextSize(text, font, fontScale, textThickness) # getting the text size
-    x, y = textPos
-    overlay = img.copy() # coping the image
-    cv.rectangle(overlay, (x-pad_x, y+ pad_y), (x+t_w+pad_x, y-t_h-pad_y), bgColor,-1) # draw rectangle
-    new_img = cv.addWeighted(overlay, bgOpacity, img, 1 - bgOpacity, 0) # overlaying the rectangle on the image.
-    cv.putText(new_img,text, textPos,font, fontScale, textColor,textThickness ) # draw in text
-    img = new_img
+    (t_w, t_h), _ = cv.getTextSize(text, font, fontScale, textThickness)
+    pad_x = int(fontScale * 10)  # Padding proportional to font scale
+    pad_y = int(fontScale * 10)  # Padding proportional to font scale
 
-    return img
+    img_h, img_w = img.shape[:2]
+
+    if corner == 'top-left':
+        x, y = textPos
+        x += pad_x
+        y += t_h + pad_y
+    elif corner == 'top-right':
+        x, y = img_w - textPos[0] - t_w - pad_x, textPos[1] + t_h + pad_y
+    elif corner == 'bottom-left':
+        x, y = textPos[0] + pad_x, img_h - textPos[1] - pad_y
+    elif corner == 'bottom-right':
+        x, y = img_w - textPos[0] - t_w - pad_x, img_h - textPos[1] - pad_y
+
+    overlay = img.copy()
+
+    # Calculate box dimensions with padding
+    box_x1, box_y1 = x - pad_x, y + pad_y
+    box_x2, box_y2 = x + t_w + pad_x, y - t_h - pad_y
+
+    # Draw a rounded rectangle (background box)
+    radius = int(min(t_w, t_h) / 2)
+    color = (bgColor[0], bgColor[1], bgColor[2])
+
+    cv.rectangle(overlay, (box_x1 + radius, box_y1), (box_x2 - radius, box_y2), color, -1)
+    cv.rectangle(overlay, (box_x1, box_y1 - radius), (box_x2, box_y2 + radius), color, -1)
+    cv.circle(overlay, (box_x1 + radius, box_y1 - radius), radius, color, -1)
+    cv.circle(overlay, (box_x2 - radius, box_y1 - radius), radius, color, -1)
+    cv.circle(overlay, (box_x1 + radius, box_y2 + radius), radius, color, -1)
+    cv.circle(overlay, (box_x2 - radius, box_y2 + radius), radius, color, -1)
+
+    # Blend the overlay with the original image
+    new_img = cv.addWeighted(overlay, bgOpacity, img, 1 - bgOpacity, 0)
+
+    # Draw the text on the image
+    cv.putText(new_img, text, (x, y), font, fontScale, textColor, textThickness)
+
+    return new_img
 
 
 def textBlurBackground(img, text, font, fontScale, textPos, textThickness=1,textColor=(0,255,0),kneral=(33,33) , pad_x=3, pad_y=3):
