@@ -179,7 +179,11 @@ class SimpleGCN(torch.nn.Module):
 ```
 </details>
 
+On ck dataset:
 ![](/test_results/GATConv.png)
+
+On fer2013 dataset:
+![](/test_results/GATConv_fer2013.png)
 
 ## GCN + SAGE 
 
@@ -301,6 +305,9 @@ Hidden dimension: 128
 
 Hidden dimension: 256
 ![](/test_results/GINConvBN_256.png)
+
+Hidden dimension: 128 om fer2013 dataset
+![](/test_results/GINConvBN_fer2013.png)
 
 ## GIN + Batch Normalization + Deep  
 
