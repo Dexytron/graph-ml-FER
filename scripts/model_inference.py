@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import networkx as nx
 from torch_geometric.data import Data
 from torch_geometric.nn import GINConv, global_mean_pool, BatchNorm
+from scripts import GAT
 import scripts
 
 
@@ -37,7 +38,8 @@ dataset = 'ck'
 # dataset = 'fer2013'
 if dataset == 'ck':
     output_dim = 8
-    label_mapping = {'neutral': 0, 'happiness': 1, 'sadness': 2, 'surprise': 3, 'fear': 4, 'disgust': 5, 'anger': 6, 'contempt': 7}
+    label_mapping = {'neutral': 0, 'happiness': 1, 'sadness': 2, 'surprise': 3, 'fear': 4,
+                     'disgust': 5, 'anger': 6, 'contempt': 7}
     model_path = scripts.__path__[0] + '/ck_GINConvBN.pt'
 elif dataset == 'fer2013':
     output_dim = 7
