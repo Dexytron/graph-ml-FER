@@ -98,3 +98,24 @@ The repository contains the following files and directories:
 ## Results
 The following first results were obtained by training a Graph Isomorphism Network (GIN) model on the CK+ dataset using the PyTorch Geometric library. The model achieved an accuracy of 80% on the test set.
 ![](/test_results/GINConvBN.png)
+
+The following results were obtained from the cross validation and XGBoost experiments:
+
+# XGBoost + CrossVal
+![](results/figure.png)
+![](results/losses.png)
+
+# Explainability averaged over test set
+
+## GIN
+![](results/GIN/xplain.png)
+
+## GAT
+![](results/GAT/xplain.png)
+
+## GCN
+![](results/GConv/xplain.png)
+
+## SAGE
+![](results/GCNSAGE/xplain.png)
+
