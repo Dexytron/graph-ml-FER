@@ -126,10 +126,9 @@ def get_landmarks(image, reference_landmarks, review=False):
         results = face_mesh.process(image)
 
         if results.multi_face_landmarks:
-            landmarks = landmarks_detection(image, results, True)
+            landmarks = landmarks_detection(image, results, True, marker_size=2)
             landmarks = landmarks[:468]  # Omit the iris landmarks
             bbox = get_bounding_box(landmarks)
-
             normalized_landmarks = normalize_landmarks(landmarks, reference_landmarks)
             if review:
                 x_min, y_min, z_min, x_max, y_max, z_max = bbox
@@ -151,12 +150,12 @@ reference_image = cv2.imread(scripts.__path__[0] + "/reference_image.jpeg")
 _, reference_landmarks = get_landmarks(reference_image, reference_landmarks=None)
 
 if __name__ == "__main__":
-    IMAGE_PATHS = ["reference_image.jpeg"]
+    IMAGE_PATHS = ["reference_image.jpeg", "Positive_person.jpeg"]
     for image_path in IMAGE_PATHS:
         image = cv2.imread(image_path)
         bbox, landmarks = get_landmarks(image, reference_landmarks, review=True)
         if bbox is None:
             print("NO FACE DETECTED: " + image_path)
         else:
-            # plot_landmarks(landmarks)
+            plot_landmarks(landmarks)
             pass

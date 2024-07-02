@@ -1,4 +1,4 @@
-import cv2 as cv
+import cv2
 import numpy as np
 
 # colors
@@ -23,11 +23,11 @@ def drawColor(img, colors):
     for color in colors:
         x += w+5
         # y += 10
-        cv.rectangle(img, (x-6, y-5 ), (x+w+5, y+h+5), (10, 50, 10), -1)
-        cv.rectangle(img, (x, y ), (x+w, y+h), color, -1)
+        cv2.rectangle(img, (x-6, y-5 ), (x+w+5, y+h+5), (10, 50, 10), -1)
+        cv2.rectangle(img, (x, y ), (x+w, y+h), color, -1)
 
 
-def textWithBackground(img, text, font, fontScale, textPos, textThickness=1, textColor=(255, 255, 255), bgColor=(0, 0, 0), bgOpacity=0.5, corner='top-left'):
+def textWithBackground(img, text, font, fontScale, textPos, textThickness=1, textColor=WHITE, bgColor=BLACK, bgOpacity=0.5, corner='top-left'):
     """
     Draws text with a rounded translucent background box and padding.
     @param img: (mat) The image on which you want to draw text.
@@ -42,7 +42,7 @@ def textWithBackground(img, text, font, fontScale, textPos, textThickness=1, tex
     @param corner: string Reference corner for positioning text ("top-left", "top-right", "bottom-left", "bottom-right").
     @return: img (mat) with text drawn on it.
     """
-    (t_w, t_h), _ = cv.getTextSize(text, font, fontScale, textThickness)
+    (t_w, t_h), _ = cv2.getTextSize(text, font, fontScale, textThickness)
     pad_x = int(fontScale * 10)  # Padding proportional to font scale
     pad_y = int(fontScale * 10)  # Padding proportional to font scale
 
@@ -69,18 +69,18 @@ def textWithBackground(img, text, font, fontScale, textPos, textThickness=1, tex
     radius = int(min(t_w, t_h) / 2)
     color = (bgColor[0], bgColor[1], bgColor[2])
 
-    cv.rectangle(overlay, (box_x1 + radius, box_y1), (box_x2 - radius, box_y2), color, -1)
-    cv.rectangle(overlay, (box_x1, box_y1 - radius), (box_x2, box_y2 + radius), color, -1)
-    cv.circle(overlay, (box_x1 + radius, box_y1 - radius), radius, color, -1)
-    cv.circle(overlay, (box_x2 - radius, box_y1 - radius), radius, color, -1)
-    cv.circle(overlay, (box_x1 + radius, box_y2 + radius), radius, color, -1)
-    cv.circle(overlay, (box_x2 - radius, box_y2 + radius), radius, color, -1)
+    cv2.rectangle(overlay, (box_x1 + radius, box_y1), (box_x2 - radius, box_y2), color, -1)
+    cv2.rectangle(overlay, (box_x1, box_y1 - radius), (box_x2, box_y2 + radius), color, -1)
+    cv2.circle(overlay, (box_x1 + radius, box_y1 - radius), radius, color, -1)
+    cv2.circle(overlay, (box_x2 - radius, box_y1 - radius), radius, color, -1)
+    cv2.circle(overlay, (box_x1 + radius, box_y2 + radius), radius, color, -1)
+    cv2.circle(overlay, (box_x2 - radius, box_y2 + radius), radius, color, -1)
 
     # Blend the overlay with the original image
-    new_img = cv.addWeighted(overlay, bgOpacity, img, 1 - bgOpacity, 0)
+    new_img = cv2.addWeighted(overlay, bgOpacity, img, 1 - bgOpacity, 0)
 
     # Draw the text on the image
-    cv.putText(new_img, text, (x, y), font, fontScale, textColor, textThickness)
+    cv2.putText(new_img, text, (x, y), font, fontScale, textColor, textThickness)
 
     return new_img
 
@@ -104,13 +104,13 @@ def textBlurBackground(img, text, font, fontScale, textPos, textThickness=1,text
      img =textBlurBackground(img, 'Blured Background Text', cv2.FONT_HERSHEY_COMPLEX, 0.9, (20, 60),2, (0,255, 0), (49,49), 13, 13 )
     """
 
-    (t_w, t_h), _= cv.getTextSize(text, font, fontScale, textThickness) # getting the text size
+    (t_w, t_h), _= cv2.getTextSize(text, font, fontScale, textThickness) # getting the text size
     x, y = textPos
     blur_roi = img[y-pad_y-t_h: y+pad_y, x-pad_x:x+t_w+pad_x] # croping Text Background
-    img[y-pad_y-t_h: y+pad_y, x-pad_x:x+t_w+pad_x]=cv.blur(blur_roi, kneral)  # merging the blured background to img
-    cv.putText(img,text, textPos,font, fontScale, textColor,textThickness )
-    # cv.imshow('blur roi', blur_roi)
-    # cv.imshow('blured', img)
+    img[y-pad_y-t_h: y+pad_y, x-pad_x:x+t_w+pad_x]=cv2.blur(blur_roi, kneral)  # merging the blured background to img
+    cv2.putText(img,text, textPos,font, fontScale, textColor,textThickness )
+    # cv2.imshow('blur roi', blur_roi)
+    # cv2.imshow('blured', img)
 
     return img
 
@@ -125,11 +125,11 @@ def fillPolyTrans(img, points, color, opacity):
     """
     list_to_np_array = np.array(points, dtype=np.int32)
     overlay = img.copy()  # coping the image
-    cv.fillPoly(overlay,[list_to_np_array], color )
-    new_img = cv.addWeighted(overlay, opacity, img, 1 - opacity, 0)
+    cv2.fillPoly(overlay,[list_to_np_array], color )
+    new_img = cv2.addWeighted(overlay, opacity, img, 1 - opacity, 0)
     # print(points_list)
     img = new_img
-    cv.polylines(img, [list_to_np_array], True, color,1, cv.LINE_AA)
+    cv2.polylines(img, [list_to_np_array], True, color,1, cv2.LINE_AA)
     return img
 
 def rectTrans(img, pt1, pt2, color, thickness, opacity):
@@ -144,14 +144,38 @@ def rectTrans(img, pt1, pt2, color, thickness, opacity):
     @return:
     """
     overlay = img.copy()
-    cv.rectangle(overlay, pt1, pt2, color, thickness)
-    new_img = cv.addWeighted(overlay, opacity, img, 1 - opacity, 0) # overlaying the rectangle on the image.
+    cv2.rectangle(overlay, pt1, pt2, color, thickness)
+    new_img = cv2.addWeighted(overlay, opacity, img, 1 - opacity, 0) # overlaying the rectangle on the image.
     img = new_img
 
     return img
 
+def draw_embeddings(frame, embeddings, start_x=10, start_y=10, end_x=10, spacing=3):
+    num_embeddings = len(embeddings)
+    if num_embeddings == 0:
+        return frame
+    frame_width = frame.shape[1]
+
+    # Calculate the total spacing and adjust for side margins
+    total_spacing = (num_embeddings - 1) * spacing
+    available_width = frame_width - start_x - end_x
+    box_size = (available_width - total_spacing) / num_embeddings
+    box_size = int(max(box_size, 1))  # Ensure box size is at least 1
+
+    max_val = np.max(embeddings)
+    min_val = np.min(embeddings)
+    normalized_embeddings = (embeddings - min_val) / (max_val - min_val)  # Normalize to [0, 1]
+
+    for i, value in enumerate(normalized_embeddings):
+        color = (0, int(value * 255), 255 - int(value * 255))  # Green to red gradient
+        top_left = (start_x + i * (box_size + spacing), start_y)
+        bottom_right = (start_x + i * (box_size + spacing) + box_size, start_y + box_size)
+        cv2.rectangle(frame, top_left, bottom_right, color, -1)
+
+    return frame
+
 def main():
-    cap = cv.VideoCapture('Girl.mp4')
+    cap = cv2.VideoCapture('Girl.mp4')
     counter =0
     while True:
         success, img = cap.read()
@@ -159,14 +183,14 @@ def main():
         img=rectTrans(img, pt1=(30, 320), pt2=(160, 260), color=(0,255,255),thickness=-1, opacity=0.6)
         img =fillPolyTrans(img=img, points=points_list, color=(0,255,0), opacity=.5)
         drawColor(img, [BLACK,WHITE ,BLUE,RED,CYAN,YELLOW,MAGENTA,GRAY ,GREEN,PURPLE,ORANGE,PINK])
-        textBlurBackground(img, 'Blured Background Text', cv.FONT_HERSHEY_COMPLEX, 0.8, (60, 140),2, YELLOW, (71,71), 13, 13)
-        img=textWithBackground(img, 'Colored Background Texts', cv.FONT_HERSHEY_SIMPLEX, 0.8, (60,80), textThickness=2, bgColor=GREEN, textColor=BLACK, bgOpacity=0.7, pad_x=6, pad_y=6)
-        imgGray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-        # cv.imwrite('color_image.png', img)
+        textBlurBackground(img, 'Blured Background Text', cv2.FONT_HERSHEY_COMPLEX, 0.8, (60, 140),2, YELLOW, (71,71), 13, 13)
+        img=textWithBackground(img, 'Colored Background Texts', cv2.FONT_HERSHEY_SIMPLEX, 0.8, (60,80), textThickness=2, bgColor=GREEN, textColor=BLACK, bgOpacity=0.7, pad_x=6, pad_y=6)
+        imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # cv2.imwrite('color_image.png', img)
         counter +=1
-        cv.imshow('img', img)
-        cv.imwrite(f'image/image_{counter}.png', img)
-        if cv.waitKey(1) ==ord('q'):
+        cv2.imshow('img', img)
+        cv2.imwrite(f'image/image_{counter}.png', img)
+        if cv2.waitKey(1) ==ord('q'):
             break
 
 if __name__ == "__main__":
